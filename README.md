@@ -1,1 +1,7 @@
 # SPACE-HUB-
+
+# THE ULTIMATE SCRIPT 
+
+# THIS SCRIPT IS CREATED BY MOHA 
+
+# DC - joybomoha 

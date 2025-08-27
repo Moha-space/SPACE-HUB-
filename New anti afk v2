@@ -1,0 +1,146 @@
+--// ANTI AFK/KICK/LAG by moha 
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+
+--// UI 
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "AntiAFKKickLagUI"
+ScreenGui.Parent = PlayerGui
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+MainFrame.Size = UDim2.new(0, 190, 0, 115)
+MainFrame.Position = UDim2.new(0.4, 0, 0.36, 0)
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+local UICorner = Instance.new("UICorner", MainFrame)
+UICorner.CornerRadius = UDim.new(0, 12)
+local UIStroke = Instance.new("UIStroke", MainFrame)
+UIStroke.Thickness = 3
+UIStroke.Color = Color3.fromRGB(76, 151, 255)
+UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+local Title = Instance.new("TextLabel", MainFrame)
+Title.BackgroundTransparency = 1
+Title.Size = UDim2.new(1, -38, 0, 22)
+Title.Position = UDim2.new(0, 10, 0, 7)
+Title.Font = Enum.Font.GothamBold
+Title.Text = "ANTI AFK/KICK/LAG by moha "
+Title.TextColor3 = Color3.fromRGB(76, 151, 255)
+Title.TextSize = 14
+Title.TextXAlignment = Enum.TextXAlignment.Left
+
+local Divider = Instance.new("Frame", MainFrame)
+Divider.Size = UDim2.new(1, -18, 0, 1)
+Divider.Position = UDim2.new(0, 9, 0, 35)
+Divider.BackgroundColor3 = Color3.fromRGB(76, 151, 255)
+Divider.BorderSizePixel = 0
+
+local FpsLabel = Instance.new("TextLabel", MainFrame)
+FpsLabel.BackgroundTransparency = 1
+FpsLabel.Position = UDim2.new(0, 10, 0, 44)
+FpsLabel.Size = UDim2.new(1, -20, 0, 22)
+FpsLabel.Font = Enum.Font.Gotham
+FpsLabel.Text = "FPS: Calculating..."
+FpsLabel.TextColor3 = Color3.fromRGB(210, 210, 210)
+FpsLabel.TextSize = 13
+FpsLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local TimePlayedLabel = Instance.new("TextLabel", MainFrame)
+TimePlayedLabel.BackgroundTransparency = 1
+TimePlayedLabel.Position = UDim2.new(0, 10, 0, 66)
+TimePlayedLabel.Size = UDim2.new(1, -20, 0, 22)
+TimePlayedLabel.Font = Enum.Font.Gotham
+TimePlayedLabel.Text = "Time Played: 0d 0h 0m 0s"
+TimePlayedLabel.TextColor3 = Color3.fromRGB(210, 210, 210)
+TimePlayedLabel.TextSize = 13
+TimePlayedLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local StatusLabel = Instance.new("TextLabel", MainFrame)
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Position = UDim2.new(0, 10, 0, 88)
+StatusLabel.Size = UDim2.new(1, -20, 0, 22)
+StatusLabel.Font = Enum.Font.Gotham
+StatusLabel.Text = "AFK Protection: ACTIVE"
+StatusLabel.TextColor3 = Color3.fromRGB(130, 255, 130)
+StatusLabel.TextSize = 13
+StatusLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local startTime = os.time()
+
+--// ANTI LAG
+local function reduceLag()
+    while true do
+        pcall(function()
+            if settings().Rendering then
+                settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+            end
+            for _, v in ipairs(workspace:GetDescendants()) do
+                if v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Beam") then
+                    v.Enabled = false
+                elseif v:IsA("BasePart") then
+                    v.Material = Enum.Material.Plastic
+                    v.CastShadow = false
+                elseif v:IsA("Decal") or v:IsA("Texture") then
+                    pcall(function() v:Destroy() end)
+                elseif v:IsA("MeshPart") then
+                    v.TextureID = ""
+                    v.Material = Enum.Material.Plastic
+                elseif v:IsA("Sound") then
+                    v.Volume = 0
+                    v.Playing = false
+                end
+            end
+
+            Lighting.GlobalShadows = false
+            Lighting.FogEnd = 1e10
+            Lighting.Brightness = 0
+            Lighting.OutdoorAmbient = Color3.fromRGB(120,120,120)
+            Lighting.ClockTime = 12
+        end)
+        collectgarbage("collect")
+        task.wait(55 + math.random(0,10))
+    end
+end
+
+--// ANTI KICK & ANTI AFK
+local function preventKick()
+    local vu = game:GetService("VirtualUser")
+    LocalPlayer.Idled:Connect(function()
+        vu:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+        task.wait(1)
+        vu:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+    end)
+end
+
+local function updateUI()
+    local frameCount = 0
+    local lastTime = os.clock()
+    RunService.RenderStepped:Connect(function()
+        frameCount += 1
+        local now = os.clock()
+        if now - lastTime >= 1 then
+            FpsLabel.Text = ("FPS: %d"):format(frameCount)
+            frameCount = 0
+            lastTime = now
+
+            local elapsed = os.time() - startTime
+            local days = math.floor(elapsed/86400)
+            local hours = math.floor((elapsed%86400)/3600)
+            local mins = math.floor((elapsed%3600)/60)
+            local sec = elapsed%60
+            TimePlayedLabel.Text = ("Time Played: %dd %dh %dm %ds"):format(days, hours, mins, sec)
+        end
+    end)
+end
+
+task.spawn(reduceLag)
+preventKick()
+updateUI()

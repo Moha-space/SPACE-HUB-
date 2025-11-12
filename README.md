@@ -1,7 +1,2 @@
-# SPACE-HUB-
-
-# THE ULTIMATE SCRIPT 
-
-# THIS SCRIPT IS CREATED BY MOHA 
-
+# discontinued space hub 
 # DC - joybomoha 

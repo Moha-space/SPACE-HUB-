@@ -1,8 +1,11 @@
-local v183 = loadstring(game:HttpGet("https://raw.githubusercontent.com/iblameaabis/Ililililililililililililil/refs/heads/main/paid%20lib", true))():AddWindow("Enchanted Hub || Paid  ( Version  || v2.1 || By iblameaabis ( W AABIS AND MOHA ) ", {
-        main_color = Color3.fromRGB(100, 0, 0),
-        min_size = Vector2.new(610, 1650),
-        can_resize = false
-    })
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/Moha-space/elerium-v2-ui-library/refs/heads/main/Library", true))()
+-- wi
+local window = library:AddWindow("                                                                 enc paid  w ( moha  lov aabis ) ", {
+    main_color = Color3.fromRGB(100, 0, 0),
+    min_size = Vector2.new(645, 595),
+    can_resize = false,
+    scrollable = true,
+})
     local v184 = v183:AddTab("Fast Glitch")
     v184:Show()
     local function vu281()
